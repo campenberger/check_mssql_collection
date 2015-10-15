@@ -95,13 +95,18 @@ class SpaceQuery(MSSQLQuery):
         else:
             status_code=SpaceQuery.OK
 
+        critical=self.options.critical if self.options.critical is not None else ""
+        warning=self.options.warning if self.options.warning is not None else ""
+
         text=[('OK:','WARNING:', 'CRITICAL:')[status_code]]
 
         def _format_text(r):
             text.append("{} ({}): {:4.1f}% used ({} of {} MB);".format(r.drive, r.name, r.used_percent, r.size-r.free, r.size))
 
         def _format_spec(r):
-            text.append("{}={};{};{};{:4.1f}".format(r.drive,r.name,r.free,r.size,r.used_percent))
+            text.append("{} used %={:3.1f};;{};{}".format(r.drive,r.used_percent,warning,critical))
+            text.append("{} free MB={};;;".format(r.drive,r.free))
+            text.append("{} szie MB={};;;".format(r.drive,r.size))
 
         map(_format_text,self.results)
         text.append('|')
