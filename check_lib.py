@@ -1,6 +1,7 @@
 import tempfile
 import time
 import pymssql
+import sys
 
 try:
     import cPickle as pickle
