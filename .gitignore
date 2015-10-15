@@ -1,0 +1,5 @@
+check-env
+*.sublime-project
+*.sublime-workspace
+t.sh
+*.pyc
