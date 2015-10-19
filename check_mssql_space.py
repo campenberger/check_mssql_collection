@@ -106,7 +106,7 @@ class SpaceQuery(MSSQLQuery):
         def _format_spec(r):
             text.append("{} used %={:3.1f};{};{};;".format(r.drive,r.used_percent,warning,critical))
             text.append("{} free MB={};;;".format(r.drive,r.free))
-            text.append("{} szie MB={};;;".format(r.drive,r.size))
+            text.append("{} size MB={};;;".format(r.drive,r.size))
 
         map(_format_text,self.results)
         text.append('|')
