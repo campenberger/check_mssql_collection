@@ -17,7 +17,6 @@ class PickleFile(object):
 
     def __init__(self,bucket_name):
         self.name=os.path.join(tempfile.gettempdir(),'check_s3-{}'.format(bucket_name))
-        print "file name: {}".format(self.name)
 
     def read(self):
         try:
@@ -108,18 +107,14 @@ class S3Check(object):
         pf=PickleFile(self.args.bucket)
         data=pf.read()
         now=time.time()
-        print "read: {}".format(data)
         try:
-            # days_since_last_sample=(now-data['time'])/(24.0*60.0*60.0)
-            days_since_last_sample=(now-data['time'])/30.0
+            days_since_last_sample=(now-data['time'])/(24.0*60.0*60.0)
             if days_since_last_sample>=1.0:
                 size_rate=(size-data['size'])/days_since_last_sample
                 count_rate=(count-data['count'])/days_since_last_sample
-                print "Last sample more than a day ago"
             else:
                 size_rate=data['size_rate']
                 count_rate=data['count_rate']
-                print "Last sample is less than a day old"
             data={
                 'time': now,
                 'size': size,
@@ -127,7 +122,6 @@ class S3Check(object):
                 'size_rate': size_rate,
                 'count_rate': count_rate
             }
-            print "New sample: {}".format(data)
         except (KeyError,TypeError):
             data={
                 'time': now,
@@ -136,7 +130,6 @@ class S3Check(object):
                 'size_rate': 0,
                 'count_rate': 0
             }
-            print "no pf yet: Initialized to {}".format(data)
         pf.write(data)
 
         size_rate=data['size_rate']*1024.0
@@ -146,7 +139,7 @@ class S3Check(object):
         message=[ self.get_code_string(code) ]
         message.append('daily_growth={:5.3f} MB'.format(size_rate))
         message.append('|')
-        message.append('daily_size_growth={:5.3f};;{};{}'.format(size_rate,self.args.critical,self.args.warning))
+        message.append('daily_size_growth={:5.3f};{};{};;'.format(size_rate,self.args.warning,self.args.critical))
         message.append('daily_count_growth={};;;'.format(count_rate))
 
         raise NagiosReturn(' '.join(message), code)
@@ -158,7 +151,7 @@ class S3Check(object):
         message=[ self.get_code_string(code) ]
         message.append('bucket size={:5.3f} GB'.format(size))
         message.append('|')
-        message.append('size={:5.3f};;{};{}'.format(size,self.args.critical,self.args.warning))
+        message.append('size={:5.3f};{};{};;'.format(size,self.args.warning,self.args.critical))
         message.append('count={};;;'.format(count))
 
         raise NagiosReturn(' '.join(message),code)
@@ -169,7 +162,7 @@ class S3Check(object):
         message=[self.get_code_string(code)]
         message.append('connect time={:4.3f} sec'.format(self.time2connect))
         message.append('|')
-        message.append('connect_time={:4.3f};;{};{}'.format(self.time2connect,self.args.critical,self.args.warning))
+        message.append('connect_time={:4.3f};{};{};;'.format(self.time2connect,self.args.warning,self.args.critical))
 
         raise NagiosReturn(' '.join(message), code)
 
