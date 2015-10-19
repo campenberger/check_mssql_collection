@@ -1,0 +1,2 @@
+boto==git+https://github.com/campenberger/boto.git
+pymssql==2.1.1
