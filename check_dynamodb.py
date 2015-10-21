@@ -16,7 +16,11 @@ class DynamoCheck(AWSCheck):
 
     def connect(self):
         start=time.time()
-        self.con=dynamodb2.connect_to_region(self.args.region)
+        self.con=dynamodb2.connect_to_region(self.args.region,
+            aws_access_key_id=self.args.key_id,
+            aws_secret_access_key=self.args.secret,
+            is_secure=True
+        )
         self.time2connect=time.time()-start
 
     def parse_args(self):
